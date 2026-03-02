@@ -1,0 +1,61 @@
+﻿@page "/"
+@using System.ComponentModel.DataAnnotations
+@using System.Diagnostics
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+<ol>
+    <li>Click "open modal" below</li>
+    <li>Click "Submit" to submit form</li>
+    <li>See how: dialog closes, UI unresponsive</li>
+</ol>
+
+<p>If EditForm is enhanced, shouldn't only it and its children be affected? Why dialog closes?</p>
+
+<button onclick="myModal.showModal()">Open modal</button>
+
+<dialog id="myModal">
+    <div>
+        <EditForm Model="Model" FormName="EmailForm" Enhance
+                  OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
+            <div>
+                <InputText @bind-Value="Model!.Name" />
+            </div>
+
+            <div>
+                <button type="submit" id="submit-email-btn">
+                    Submit
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</dialog>
+
+@code {
+    [SupplyParameterFromForm]
+    private ContactModel? Model { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Model ??= new ContactModel();
+    }
+
+    private void HandleValidSubmit()
+    {
+        Debug.WriteLine($"Valid submit. Value: {Model?.Name}");
+    }
+
+    private void HandleInvalidSubmit()
+    {
+        Debug.WriteLine($"Invalid submit. Value: {Model?.Name}");
+    }
+
+    public class ContactModel
+    {
+        [Required]
+        public string? Name { get; set; }
+    }
+}
